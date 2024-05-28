@@ -1,4 +1,5 @@
 import shutil
+import tempfile
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
@@ -17,9 +18,18 @@ CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 vectorstore_path = "vectorstores/db_chroma"
 embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf",gpt4all_kwargs={'allow_download': 'True'})
-PDF_store = set() #set of PDF data and its image
+PDF_store = {} #data path:doc, img
 db = Chroma(
         persist_directory=vectorstore_path, embedding_function=embedding_model)
+
+def save_uploaded_pdf(uploaded_file):
+    # Create a temporary directory
+    temp_dir = tempfile.mkdtemp()
+    # Save the uploaded PDF file to the temporary directory
+    file_path = os.path.join(temp_dir, uploaded_file.name)
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return file_path
 
 def init_PDF_store():
     if os.path.isfile("data/PDF/store.pkl"):
@@ -43,13 +53,15 @@ def clear_PDF_store():
 # clear_web_store()
 init_PDF_store()
 
-def extract_PDF(pdf_data):
+def extract_PDF(pdf_path):
     """
     Extract the text from a PDF file
     """
-    loader = PyPDFLoader(pdf_data)
+    loader = PyPDFLoader(pdf_path)
     documents = loader.load()
     return documents
+
+# def convert()
 
 def split_documents(documents:list[Document]): #-> list[list[str]]:
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50,length_function=len,is_separator_regex=False)
@@ -84,36 +96,41 @@ def create_chunks_with_ids(chunks):
 
     return chunks
 
-def remove_PDF(pdf_data):#web_store + vectordb
-    
+def remove_PDF(pdf_path):#web_store + vectordb
+    print(pdf_path)
     #remove in web_store
     init_PDF_store()
-    print("removing:",len(PDF_store))
-    image = pdf_utilities.pdf_to_image(pdf_data)
-    PDF_store.remove((pdf_data,image))
+    print("removing PDF:",len(PDF_store))
+    documents,image = PDF_store[pdf_path] 
+    del PDF_store[pdf_path]
     close_PDF_store()
     #remove in vectorstore
-    documents = PyPDFLoader(pdf_data)
+    documents = PyPDFLoader(pdf_path).load()
     chunks = split_documents(documents)
     chunks_with_ids = create_chunks_with_ids(chunks)
     existing_items = db.get(include=[])
     for chunk in chunks_with_ids:
         if chunk.metadata['id'] in existing_items:
             db.remove_by_id(chunk.metadata['id'])
+    #remove temp file
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
 
-def add_PDF(pdf_data): #web_store + vectordb
-    if pdf_data in PDF_store:
-        remove_PDF(pdf_data)
+
+def add_PDF(pdf_path): #web_store + vectordb
+    if pdf_path in PDF_store:
+        remove_PDF(pdf_path)
     init_PDF_store()
-    documents = extract_PDF(pdf_data)
-    image = pdf_utilities.pdf_to_image(pdf_data)
-    PDF_store.add((pdf_data,image))
+    documents = extract_PDF(pdf_path)
+    # print("yjtadsy")
+    # return None
+    image = pdf_utilities.pdf_to_image(pdf_path)
+    PDF_store[pdf_path] = (documents,image)
     close_PDF_store()
-
+    
     chunks = split_documents(documents)
     chunks_with_ids = create_chunks_with_ids(chunks)
 
-    #####
     #add chunks to db
     existing_items = db.get(include=[])  # IDs are always included by default
     # print(dir(existing_items))

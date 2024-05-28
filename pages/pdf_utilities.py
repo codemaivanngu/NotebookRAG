@@ -1,3 +1,4 @@
+import os
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
@@ -5,12 +6,22 @@ from langchain.schema.document import Document
 import fitz  # PyMuPDF
 from PIL import Image
 from bs4 import BeautifulSoup
+import tempfile
+
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 
 data_path = "data"
 vectorstore_path = "vectorstores/db_chroma"
+
+def save_temp_pdf(uploaded_file):
+    temp_dir = tempfile.mkdtemp()
+    # Save the uploaded PDF file to the temporary directory
+    file_path = os.path.join(temp_dir, uploaded_file.name)
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return file_path
 
 def load_documents():
     document_loader = PyPDFDirectoryLoader(data_path)
@@ -26,8 +37,8 @@ def split_documents(documents:list[Document]): #-> list[list[str]]:
     return text_splitter.split_documents(documents)
 
 # Function to convert PDF to image
-def pdf_to_image(pdf_data):
-    pdf_document = fitz.open(stream=pdf_data, filetype="pdf")
+def pdf_to_image(pdf_path):
+    pdf_document = fitz.open(pdf_path)
     first_page = pdf_document.load_page(0)
     pix = first_page.get_pixmap()
     image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)

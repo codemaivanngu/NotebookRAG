@@ -69,35 +69,17 @@ if files:
     st.session_state["uploaded_files"] = files
     st.session_state["file_uploader_key"] += 1
     
-    print(len(st.session_state["uploaded_files"]))
+    # print(len(st.session_state["uploaded_files"]))
+    # pdf_data = st.session_state["uploaded_files"][0].read()
+    
+    # print(pdf_data)
+    # control_pdf_on_data.add_PDF(pdf_data)
     for uploaded_file in st.session_state["uploaded_files"]:
-        pdf_data = uploaded_file.read()
-        documents,image = control_pdf_on_data.add_PDF(pdf_data)
-    st.rerun()
-# if st.button("Clear uploaded files"):
-    
-# if uploaded_files is not None:
-#     uploaded_files_names = [uploaded_file.name for uploaded_file in uploaded_files]
-    
-#     # # Detect removed files
-#     # removed_files = set(previous_uploaded_files) - set(uploaded_files_names)
-#     # for removed_file in removed_files:
-#     #     st.session_state.pdf_images = [(name, img) for name, img in st.session_state.pdf_images if name != removed_file]
-    
-#     # Update session state with current file names
-#     # st.session_state.uploaded_files_names = uploaded_files_names
-
-#     for uploaded_file in uploaded_files:
-#         if uploaded_file.name not in [file[0] for file in st.session_state.pdf_images]:
-#             pdf_data = uploaded_file.read()
-#             image = pdf_utilities.pdf_to_image(pdf_data)
-#             # Store the image in the session state
-#             st.session_state.pdf_images.append((uploaded_file.name, image))
-
-# Website URL input
-# website_url = st.text_input("Enter website URL")
-if "input_temp" not in st.session_state:
-    st.session_state.input_temp = ""
+        # pdf_data = uploaded_file.read()
+        # documents,image = control_pdf_on_data.add_PDF(pdf_data)
+        path = control_pdf_on_data.save_uploaded_pdf(uploaded_file)
+        control_pdf_on_data.add_PDF(path)
+    st.rerun() 
 
 def F5():
     control_web.add_web_page(st.session_state.input1,"input")
@@ -107,21 +89,28 @@ def F5():
 website_url = st.text_input("Enter website URL",key="input1",on_change=F5)
 
 # Display the uploaded PDFs and their thumbnails
-if st.session_state.pdf_images or len(control_web.web_store):
+if len(control_pdf_on_data.PDF_store) or len(control_web.web_store):
     st.header("Workspace")
     
     cols = st.columns(4)
     idx = 0
     st.session_state.PDF_need_to_del ={}
-    for pdf_data, image in control_pdf_on_data.PDF_store:
-        documents = control_pdf_on_data.extract_PDF(pdf_data)
+    for pdf_path,value in control_pdf_on_data.PDF_store.items():
+        documents,image = value
+        title=documents[0].metadata['source'].split("\\")[-1]
         with cols[idx % 4]:
-            if st.session_state.PDF_need_to_del.get((pdf_data,image))==None:
-                st.image(image, caption=documents[0].metadata['title'], use_column_width=True)
-            if st.button(f"Remove {documents[0].metadata['title']}"):
-                st.session_state.PDF_need_to_del[(pdf_data,image)]="1"
+            if st.session_state.PDF_need_to_del.get(pdf_path)==None:
+                st.image(image, caption=title, use_column_width=True)
+            if st.button(f"Remove {title}"):
+                st.session_state.PDF_need_to_del[pdf_path]="1"
         idx += 1
-
+    if len(st.session_state.PDF_need_to_del):
+        for key in st.session_state.PDF_need_to_del.keys():
+            control_pdf_on_data.remove_PDF(key)
+        st.session_state.PDF_need_to_del ={}
+        control_pdf_on_data.close_PDF_store()
+        st.rerun()
+        
     # show webpage
     st.session_state.web_need_to_del ={}
     for url,value in control_web.web_store.items():
@@ -135,8 +124,7 @@ if st.session_state.pdf_images or len(control_web.web_store):
     if len(st.session_state.web_need_to_del):
         for url in st.session_state.web_need_to_del.keys():
             control_web.remove_web_page(url)
-        for key in st.session_state.PDF_need_to_del:
-            control_pdf_on_data.remove_PDF(key)
         st.session_state.web_need_to_del ={}
+        
+        control_web.close_web_store()
         st.rerun()
-        control_web.clear_web_store()
