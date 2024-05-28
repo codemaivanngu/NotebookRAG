@@ -4,10 +4,10 @@ import shutil
 import subprocess
 # from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_community.vectorstores import Chroma
-if __name__ == "__main__":
-    import pdf_utilities
-else:
-    from . import pdf_utilities 
+# if __name__ == "__main__":
+import pdf_utilities
+# else:
+#     from . import pdf_utilities 
 from langchain_community.embeddings import GPT4AllEmbeddings
 from gpt4all import Embed4All
 

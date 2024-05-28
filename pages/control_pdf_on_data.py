@@ -32,11 +32,11 @@ def save_uploaded_pdf(uploaded_file):
     return file_path
 
 def init_PDF_store():
-    if os.path.isfile("data/PDF/store.pkl"):
-        PDF_store = pickle.load(open("data/PDF/store.pkl", "rb"))
+    if os.path.isfile("./data/PDF/store.pkl"):
+        PDF_store = pickle.load(open("./data/PDF/store.pkl", "rb"))
     else:
         PDF_store = {}
-        with open("data/PDF/store.pkl", "wb") as f:
+        with open("./data/PDF/store.pkl", "wb") as f:
             pickle.dump({},f)
     print("len PDF_store:",len(PDF_store))
 
@@ -45,9 +45,9 @@ def close_PDF_store():
         pickle.dump(PDF_store,f)
     print("len PDF_store:",len(PDF_store))
 def clear_PDF_store():
-    if os.path.exists('data/PDF/'):
-        shutil.rmtree('data/PDF/')
-    os.makedirs('data/PDF/')
+    if os.path.exists(r'C:\Projects\NoteRAG\pages\data\PDF\store.pkl'):
+        os.remove(r'C:\Projects\NoteRAG\pages\data\PDF\store.pkl')
+    # os.makedirs('data/PDF/')
     init_PDF_store()
     close_PDF_store()
 # clear_web_store()
@@ -139,6 +139,7 @@ def add_PDF(pdf_path): #web_store + vectordb
     for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
             new_chunks.append(chunk)
+    print("@@@@@ New chunks", new_chunks)
     if len(new_chunks):
         print(f"👉 Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]

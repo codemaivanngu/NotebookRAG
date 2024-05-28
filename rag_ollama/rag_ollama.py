@@ -43,7 +43,7 @@ def main():
     # parser.add_argument("query_text", type=str, help="The query text.")
     # args = parser.parse_args()
     # query_text = args.query_text
-    query_text = "mức phụ cấp được quy định tại thông tư nào?"
+    query_text = "Số vốn vay được hỗ trợ lãi suất là bao nhiêu?"
     """
     Response: Mức phụ cấp được quy định tại Thông tư 06/2024/T T-BYT ngà y 16/5/2024 của Bộ trưởng Bộ Y tế.
 Sources: ['data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:0:0:4238894112', 'data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:0:1:4238894112', 'data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:1:0:4238894112']

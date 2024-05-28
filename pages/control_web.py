@@ -22,11 +22,11 @@ db = Chroma(
 
 
 def init_web_store():
-    if os.path.isfile("data/web/store.pkl"):
-        web_store = pickle.load(open("data/web/store.pkl", "rb"))
+    if os.path.isfile("./data/web/store.pkl"):
+        web_store = pickle.load(open("./data/web/store.pkl", "rb"))
     else:
         web_store = {}
-        with open("data/web/store.pkl", "wb") as f:
+        with open("./data/web/store.pkl", "wb") as f:
             pickle.dump({},f)
     print("len web_store:",len(web_store))
 def close_web_store():
@@ -34,8 +34,8 @@ def close_web_store():
         pickle.dump(web_store,f)
     print("len web_store:",len(web_store))
 def clear_web_store():
-    if os.path.exists('data/web/store.pkl'):
-        os.remove('data/web/store.pkl')
+    if os.path.exists(r'C:\Projects\NoteRAG\pages\data\web\store.pkl'):
+        os.remove(r'C:\Projects\NoteRAG\pages\data\web\store.pkl')
     # os.makedirs('data/web/')
     init_web_store()
     close_web_store()
