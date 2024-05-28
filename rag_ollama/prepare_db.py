@@ -4,11 +4,14 @@ import shutil
 import subprocess
 # from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_community.vectorstores import Chroma
-from pdf_utilities import *
+if __name__ == "__main__":
+    import pdf_utilities
+else:
+    from . import pdf_utilities 
 from langchain_community.embeddings import GPT4AllEmbeddings
 from gpt4all import Embed4All
 
-data_path = "data"
+data_path = "data/pdf"
 vectorstore_path = "vectorstores/db_chroma"
 
 #start ollama server
@@ -30,17 +33,17 @@ def main():
         clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents()
+    documents = pdf_utilities.load_documents()
     print("📚 Loaded documents: ", len(documents))
-    chunks = split_documents(documents)
+    chunks = pdf_utilities.split_documents(documents)
     print("📝 Split documents into chunks: ", len(chunks))
     add_to_chroma(chunks)
     print("✨ Done!")
 
     # process.terminate()
 
-documents = load_documents()
-chunks = split_documents(documents)
+documents = pdf_utilities.load_documents()
+chunks = pdf_utilities.split_documents(documents)
 
 
 
@@ -49,7 +52,7 @@ def add_to_chroma(chunks):
     db = Chroma(
         persist_directory=vectorstore_path, embedding_function=embedding_model)
     # Calculate Page IDs.
-    chunks_with_ids_and_hashes = calculate_chunk_ids_and_hash(chunks)
+    chunks_with_ids = calculate_chunk_ids(chunks)
 
     # Add or Update the documents.
     existing_items = db.get(include=[])  # IDs are always included by default
@@ -59,7 +62,7 @@ def add_to_chroma(chunks):
 
 # Only add documents that don't exist in the DB.
     new_chunks = []
-    for chunk in chunks_with_ids_and_hashes:
+    for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
             new_chunks.append(chunk)
     
@@ -77,18 +80,17 @@ def add_to_chroma(chunks):
     # db.persist() #automatically persisted
 
 
-def calculate_chunk_ids_and_hash(chunks):
-    # This will create IDs like "data/monopoly.pdf:6:2"
+def calculate_chunk_ids(chunks):
+    # This will create IDs like "data/pdf/monopoly.pdf:6:2"
     # Page Source : Page Number : Chunk Index
 
     last_page_id = None
     current_chunk_index = 0
+    print(len(chunks))
 
     for chunk in chunks:
         source = chunk.metadata.get("source")
         page = chunk.metadata.get("page")
-        hash_code = hash(chunk.metadata.get("content"))
-        print("fucking content:",chunk.metadata.get("content"))
         current_page_id = f"{source}:{page}"
 
         # If the page ID is the same as the last one, increment the index.
@@ -99,7 +101,6 @@ def calculate_chunk_ids_and_hash(chunks):
 
         # Calculate the chunk ID.
         chunk_id = f"{current_page_id}:{current_chunk_index}"
-        chunk_id = f"{chunk_id}:{hash_code}"
         last_page_id = current_page_id
 
         # Add it to the page meta-data.
