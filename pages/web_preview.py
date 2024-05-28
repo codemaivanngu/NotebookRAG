@@ -33,7 +33,7 @@ def get_website_icon(url):
       # Assumes the downloaded favicon is a valid image format
       image_bytes = BytesIO()
       image.save(image_bytes, format="PNG")
-      image.show()
+      # image.show()
       return Image.open(image_bytes)  # Return converted PNG image
     except (IOError, OSError):
       pass  # Ignore errors and move to next approach
@@ -57,7 +57,7 @@ def get_website_icon(url):
         image = Image.open(BytesIO(response.content))
         image_bytes = BytesIO()
         image.save(image_bytes, format="PNG")
-        image.show()
+        # image.show()
         return Image.open(image_bytes)  # Return converted PNG image
       except (IOError, OSError):
         pass  # Ignore errors and move to optional fallback

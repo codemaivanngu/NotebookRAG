@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from streamlit_extras.switch_page_button import switch_page
 
-from pages import document_space, chat_space,home
+import document_space, chat_space, home
 
 st.set_page_config(
     page_title="NoteRAG",
@@ -34,7 +34,7 @@ def run():
             options=["Home", "Data", "Chat"],
             icons=["house", "book", "chat-left"],
             default_index=0,
-            orientation="horizontal",
+            # orientation="horizontal",
         )
     
 
