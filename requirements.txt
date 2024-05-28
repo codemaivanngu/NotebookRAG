@@ -1,0 +1,14 @@
+imgkit
+streamlit
+selenium
+webdriver_manager
+requests
+beautifulsoup4
+aiohttp 
+requests_cache
+streamlit_option_menu
+pytest
+chromadb
+langchain
+langchain_community
+gpt4all
