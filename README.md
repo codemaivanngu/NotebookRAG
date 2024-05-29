@@ -1,7 +1,3 @@
-Sure! Below is an updated README file for your GitHub project "NotebookRAG" with instructions for using Docker.
-
----
-
 # NotebookRAG
 
 ## Introduction
