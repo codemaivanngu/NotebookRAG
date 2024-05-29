@@ -30,8 +30,9 @@ NotebookRAG integrates several key components to deliver its functionalities:
    ```bash
    docker pull codemaivanngu/note_rag:latest
    ```
+   [link](https://hub.docker.com/repository/docker/codemaivanngu/note_rag/general)
 
-3. **Create and run a Docker container:**
+4. **Create and run a Docker container:**
    ```bash
    docker run -d -p 8501:8501 --name notebookrag_container codemaivanngu/note_rag:latest
    ```
