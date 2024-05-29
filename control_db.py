@@ -1,7 +1,6 @@
-import argparse
 import os
 import shutil
-vectorstore_path = r"C:\Projects\NoteRAG\pages\vectorstores\db_chroma"
+vectorstore_path = r".\vectorstores\db_chroma"
 
 def clear_database():
     if os.path.exists(vectorstore_path):

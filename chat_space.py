@@ -1,31 +1,13 @@
-import argparse
-import os
-import shutil
-import subprocess
-# from langchain_community.embeddings.ollama import OllamaEmbeddings
-from langchain_community.vectorstores import Chroma
-from pdf_utilities import *
-from langchain_community.embeddings import GPT4AllEmbeddings
-from gpt4all import Embed4All
-import prepare_db
 import streamlit as st
+import prepare_db
+from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 from langchain_core.messages import AIMessage, HumanMessage
 
 def app():
 
-    # data_path = prepare_db.data_path
     vectorstore_path = prepare_db.vectorstore_path
-    # print("chat_space:",vectorstore_path)
-
-    #start ollama server
-    # os.system('$env:OLLAMA_HOST="127.0.0.1:12345"')
-    # os.system('set OLLAMA_HOST=127.0.0.1:12345')
-    # os.environ['OLLAMA_HOST'] = '127.0.0.1:12345'
-    # os.system("ollama pull nomic-embed-text")
-    # process = subprocess.Popen(['ollama', 'serve'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # embedding_model = OllamaEmbeddings(model='all-minilm:latest',model_kwargs={'allow_download': 'True'})
 
     PROMPT_TEMPLATE_EN = """
     Answer the question based only on the following context:
@@ -34,6 +16,7 @@ def app():
     ---
     Answer the question based on the above context:{question}
     """
+
     PROMPT_TEMPLATE_VI =\
     """
     <|im_start|>system

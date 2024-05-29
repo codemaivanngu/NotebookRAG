@@ -1,14 +1,4 @@
 import streamlit as st
-import fitz  # PyMuPDF
-from PIL import Image
-import io
-import requests
-from bs4 import BeautifulSoup
-import threading
-from time import perf_counter
-import pdf_utilities
-import web_preview
-import pickle
 import control_web
 import control_pdf_on_data
 
@@ -52,7 +42,7 @@ def app():
         st.rerun() 
 
     def F5():
-        control_web.add_web_page(st.session_state.input1,"input")
+        control_web.add_web_page(st.session_state.input1)
         st.session_state.input_temp=st.session_state.input1
         st.session_state.input1 = ""
 
@@ -71,7 +61,8 @@ def app():
             with cols[idx % 4]:
                 if st.session_state.PDF_need_to_del.get(pdf_path)==None:
                     st.image(image, caption=title, use_column_width=True)
-                if st.button(f"Remove {title}"):
+                # if st.button(f"Remove {title}"):
+                if st.button(f"Remove"):
                     st.session_state.PDF_need_to_del[pdf_path]="1"
             idx += 1
         if len(st.session_state.PDF_need_to_del):
@@ -88,7 +79,9 @@ def app():
             with cols[idx % 4]:
                 if st.session_state.web_need_to_del.get(url)==None:
                     st.image(image, caption=documents[0].metadata['title'], use_column_width=True)
-                if st.button(f"Remove {url}", key=f"remove-url-{url}"):
+                # if st.button(f"Remove {url}", key=f"remove-url-{url}"):
+                if st.button(f"Remove"):
+
                     st.session_state.web_need_to_del[url]="1"
             idx += 1
         if len(st.session_state.web_need_to_del):

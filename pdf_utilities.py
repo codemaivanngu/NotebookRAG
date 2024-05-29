@@ -5,7 +5,6 @@ from langchain.schema.document import Document
 
 import fitz  # PyMuPDF
 from PIL import Image
-from bs4 import BeautifulSoup
 import tempfile
 
 
@@ -28,7 +27,7 @@ def load_documents():
     return document_loader.load()
 
 def load_document(file_path):
-    document_loader = PyPDFDirectoryLoader(data_path)
+    document_loader = PyPDFDirectoryLoader(file_path)
     return document_loader.load()
 
 def split_documents(documents:list[Document]): #-> list[list[str]]:

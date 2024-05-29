@@ -1,26 +1,22 @@
-import shutil
+import prepare_db 
+import web_preview 
+import pickle
+import os.path
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain.schema.document import Document
-import prepare_db 
-import web_preview 
-# import rag_ollama.pdf_utilities
-import pickle
-import os.path
-
 from langchain_community.embeddings import GPT4AllEmbeddings
-from gpt4all import Embed4All
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 vectorstore_path = "vectorstores/db_chroma"
 embedding_model = GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf",gpt4all_kwargs={'allow_download': 'True'})
-web_store = {}
+web_store = {} # A dictionary with type {url: (documents e.i. text information of website, image e.i. the icon of website)}
 db = Chroma(
         persist_directory=vectorstore_path, embedding_function=embedding_model)
 
-
+#3 elements function control the persistion of links
 def init_web_store():
     if os.path.isfile("./data/web/store.pkl"):
         web_store = pickle.load(open("./data/web/store.pkl", "rb"))
@@ -29,17 +25,18 @@ def init_web_store():
         with open("./data/web/store.pkl", "wb") as f:
             pickle.dump({},f)
     print("len web_store:",len(web_store))
+
 def close_web_store():
     with open("data/web/store.pkl", "wb") as f:
         pickle.dump(web_store,f)
     print("len web_store:",len(web_store))
+
 def clear_web_store():
-    if os.path.exists(r'C:\Projects\NoteRAG\pages\data\web\store.pkl'):
-        os.remove(r'C:\Projects\NoteRAG\pages\data\web\store.pkl')
-    # os.makedirs('data/web/')
+    if os.path.exists(r'.\data\web\store.pkl'):
+        os.remove(r'.\data\web\store.pkl')
     init_web_store()
     close_web_store()
-# clear_web_store()
+
 init_web_store()
 
 def extract_web(url):
@@ -86,8 +83,7 @@ def remove_web_page(url):#web_store + vectordb
         if chunk.metadata['id'] in existing_items:
             db.remove_by_id(chunk.metadata['id'])
     
-def add_web_page(url,fromm = "nowhere"): #web_store + vectordb
-    if fromm != "nowhere": print("from",fromm)
+def add_web_page(url): #web_store + vectordb
     if url in web_store:
         remove_web_page(url)
     init_web_store()
@@ -99,7 +95,6 @@ def add_web_page(url,fromm = "nowhere"): #web_store + vectordb
     chunks = split_documents(documents)
     chunks_with_ids = create_chunks_with_ids(chunks)
 
-    #####
     #add chunks to db
     existing_items = db.get(include=[])  # IDs are always included by default
     # print(dir(existing_items))

@@ -1,14 +1,13 @@
-imgkit
 streamlit
-selenium
-webdriver_manager
-requests
-beautifulsoup4
-aiohttp 
-requests_cache
-streamlit_option_menu
-pytest
-chromadb
+langchain_core
 langchain
 langchain_community
-gpt4all
+
+ollama
+chromadb
+
+streamlit_option_menu
+
+bs4
+# PIL
+Pillow

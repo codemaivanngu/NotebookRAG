@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from io import BytesIO
 from urllib.parse import urljoin
 from PIL import Image
-from playwright.sync_api import sync_playwright
+# from playwright.sync_api import sync_playwright
 
 def get_website_icon(url):
   """
@@ -12,8 +12,7 @@ def get_website_icon(url):
   This function tries three approaches to find a website icon:
     1. Checks for a favicon.ico file at the root of the website URL.
     2. Parses the website's HTML for a link element with rel="icon" or rel="shortcut icon".
-    3. (Optional) If Playwright is installed, tries to capture a screenshot of
-       the website's first page as a fallback (converted to PNG).
+    3. Return no_internet image.
 
   Args:
       url (str): The URL of the website to get the icon from.
@@ -107,43 +106,43 @@ def get_website_title(url):
   return title
 
 
-def url_to_image(url, viewport=None, selector=None):
-  """
-  Captures a screenshot of a website as an image.
+# def url_to_image(url, viewport=None, selector=None):
+#   """
+#   Captures a screenshot of a website as an image.
 
-  This function uses Playwright to launch a headless browser, navigate to the
-  specified URL, and capture a screenshot of the entire page by default.  You can
-  optionally provide a viewport size and a CSS selector to capture a specific
-  area of the page.
+#   This function uses Playwright to launch a headless browser, navigate to the
+#   specified URL, and capture a screenshot of the entire page by default.  You can
+#   optionally provide a viewport size and a CSS selector to capture a specific
+#   area of the page.
 
-  Args:
-      url (str): The URL of the website to capture.
-      viewport (dict, optional): A dictionary specifying the viewport width
-          and height for the screenshot. Defaults to None (full page).
-      selector (str, optional): A CSS selector to capture a specific area
-          of the page. Defaults to None (full page).
+#   Args:
+#       url (str): The URL of the website to capture.
+#       viewport (dict, optional): A dictionary specifying the viewport width
+#           and height for the screenshot. Defaults to None (full page).
+#       selector (str, optional): A CSS selector to capture a specific area
+#           of the page. Defaults to None (full page).
 
-  Returns:
-      bytes: The captured screenshot image data in bytes.
-  """
-  with sync_playwright() as playwright:
-    browser = playwright.webkit.launch(headless=True)  # Run headless
-    page = browser.new_page()
-    if viewport:
-      page.set_viewport_size(viewport)
-    page.goto(url)
-    if selector:
-      # Capture the specified element or area
-      image = page.query_selector(selector).screenshot()
-    else:
-      # Capture the entire page
-      image = page.screenshot(full_page=True)
-    browser.close()
-    return image
+#   Returns:
+#       bytes: The captured screenshot image data in bytes.
+#   """
+#   with sync_playwright() as playwright:
+#     browser = playwright.webkit.launch(headless=True)  # Run headless
+#     page = browser.new_page()
+#     if viewport:
+#       page.set_viewport_size(viewport)
+#     page.goto(url)
+#     if selector:
+#       # Capture the specified element or area
+#       image = page.query_selector(selector).screenshot()
+#     else:
+#       # Capture the entire page
+#       image = page.screenshot(full_page=True)
+#     browser.close()
+#     return image
 
-# # Example usage
-# image_data = url_to_image("https://www.google.com/")
-# # or capture a specific element
-# image_data = url_to_image("https://www.example.com/", selector="#main-content")
+# # # Example usage
+# # image_data = url_to_image("https://www.google.com/")
+# # # or capture a specific element
+# # image_data = url_to_image("https://www.example.com/", selector="#main-content")
 
 
