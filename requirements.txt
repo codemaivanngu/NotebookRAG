@@ -2,6 +2,10 @@ streamlit
 langchain_core
 langchain
 langchain_community
+# fitz
+pymupdf
+gpt4all 
+pypdf
 
 ollama
 chromadb

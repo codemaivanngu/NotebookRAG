@@ -38,10 +38,7 @@ def app():
     model = Ollama(model="llama3")
     def main():
         query_text = "Số vốn vay được hỗ trợ lãi suất là bao nhiêu??"
-        """
-        Response: Mức phụ cấp được quy định tại Thông tư 06/2024/T T-BYT ngà y 16/5/2024 của Bộ trưởng Bộ Y tế.
-        Sources: ['data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:0:0:4238894112', 'data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:0:1:4238894112', 'data\\Mức phụ cấp với Trưởng, Phó Trưởng trạm y tế xã, Phó trưởng khoa, phòng, điều dưỡng trưởng, hộ sinh trưởng,... áp dụng từ ngày 1_7.pdf:1:0:4238894112']
-        """
+        
         query_rag(query_text)
 
     def query_rag(query_text:str):
@@ -50,10 +47,6 @@ def app():
         context_text = "\n\n".join([doc.page_content for doc, _score in results])
         prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE_VI)
         prompt = prompt_template.format(context=context_text, question=query_text)
-        # print(context_text)
-        # print("###########################################################")
-        # print("Prompt:",prompt)
-
         
         response_text = model.invoke(prompt)
 
@@ -61,6 +54,8 @@ def app():
         formatted_response = f"Response: {response_text}\nSources: {sources}"
         print()
         print(formatted_response)
+
+        # template = """Nội dung nằm ở: """
         return response_text
 
 

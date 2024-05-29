@@ -62,7 +62,7 @@ def app():
                 if st.session_state.PDF_need_to_del.get(pdf_path)==None:
                     st.image(image, caption=title, use_column_width=True)
                 # if st.button(f"Remove {title}"):
-                if st.button(f"Remove"):
+                if st.button(f"Remove",key=f"remove-PDF-{title}"):
                     st.session_state.PDF_need_to_del[pdf_path]="1"
             idx += 1
         if len(st.session_state.PDF_need_to_del):
@@ -80,7 +80,7 @@ def app():
                 if st.session_state.web_need_to_del.get(url)==None:
                     st.image(image, caption=documents[0].metadata['title'], use_column_width=True)
                 # if st.button(f"Remove {url}", key=f"remove-url-{url}"):
-                if st.button(f"Remove"):
+                if st.button(f"Remove", key=f"remove-url-{url}"):
 
                     st.session_state.web_need_to_del[url]="1"
             idx += 1
