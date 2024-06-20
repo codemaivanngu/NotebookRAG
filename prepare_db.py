@@ -4,7 +4,6 @@ import shutil
 from langchain_community.vectorstores import Chroma
 import pdf_utilities
 from langchain_community.embeddings import GPT4AllEmbeddings
-# from gpt4all import Embed4All
 
 data_path = "data/pdf"
 vectorstore_path = "vectorstores/db_chroma"

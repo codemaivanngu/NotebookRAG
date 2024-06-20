@@ -35,7 +35,7 @@ def app():
     # """
     db = Chroma(
         persist_directory=vectorstore_path, embedding_function=prepare_db.embedding_model)
-    model = Ollama(model="llama3")
+    model = Ollama(model="gemma:2b")
     def main():
         query_text = "Số vốn vay được hỗ trợ lãi suất là bao nhiêu??"
         
@@ -59,7 +59,7 @@ def app():
         return response_text
 
 
-    st.title("Chat with websites")
+    st.title("Chat with data.")
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [AIMessage(content="Hello, I'm a bot. How can I help you?"),]
 
