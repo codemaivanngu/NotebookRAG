@@ -17,7 +17,7 @@ RUN pip3 install -r requirements.txt
 # Start ollama service
 RUN nohup ollama start & \
     sleep 10 && \
-    ollama pull llama3 
+    ollama pull llama3
 # RUN ollama serve
 
 EXPOSE 8501

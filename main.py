@@ -1,7 +1,12 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import document_space, chat_space, home
-import control_db,control_pdf_on_data,control_web
+
+import chat_space
+import control_db
+import control_pdf_on_data
+import control_web
+import document_space
+import home
 
 st.set_page_config(
     page_title="NoteRAG",
@@ -13,16 +18,16 @@ st.set_page_config(
     },
 )
 
+
 def run():
     with st.sidebar:
-        st.session_state.selected  = option_menu(
+        st.session_state.selected = option_menu(
             menu_title=None,
-            options=["Home", "Data", "Chat","Reset"],
-            icons=["house", "book", "chat-left","arrow-clockwise"],
+            options=["Home", "Data", "Chat", "Reset"],
+            icons=["house", "book", "chat-left", "arrow-clockwise"],
             default_index=0,
             # orientation="horizontal",
         )
-    
 
     if st.session_state.selected == "Home":
         # switch_page("home")
@@ -37,5 +42,6 @@ def run():
         control_web.clear_web_store()
         control_pdf_on_data.clear_PDF_store()
         control_db.clear_database()
+
 
 run()

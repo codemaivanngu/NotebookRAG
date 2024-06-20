@@ -3,7 +3,7 @@ langchain_core
 langchain
 langchain_community
 pymupdf
-gpt4all 
+gpt4all
 pypdf
 ollama
 chromadb
