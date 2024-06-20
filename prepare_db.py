@@ -1,23 +1,30 @@
 import argparse
 import os
 import shutil
-from langchain_community.vectorstores import Chroma
-import pdf_utilities
+
 from langchain_community.embeddings import GPT4AllEmbeddings
+from langchain_community.vectorstores import Chroma
+
+import pdf_utilities
 
 data_path = "data/pdf"
 vectorstore_path = "vectorstores/db_chroma"
 
-#start ollama server
+# start ollama server
 # os.system('$env:OLLAMA_HOST="127.0.0.1:12345"')
 # os.system('set OLLAMA_HOST=127.0.0.1:12345')
 # os.environ['OLLAMA_HOST'] = '127.0.0.1:12345'
 # os.system("ollama pull nomic-embed-text")
 # process = subprocess.Popen(['ollama', 'serve'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-# embedding_model = OllamaEmbeddings(model='all-minilm:latest',model_kwargs={'allow_download': 'True'})
-embedding_model =GPT4AllEmbeddings(model_name="all-MiniLM-L6-v2.gguf2.f16.gguf",gpt4all_kwargs={'allow_download': 'True'})
-def main():
+# embedding_model = OllamaEmbeddings
+# (model='all-minilm:latest',model_kwargs={'allow_download': 'True'})
+embedding_model = GPT4AllEmbeddings(
+    model_name="all-MiniLM-L6-v2.gguf2.f16.gguf",
+    gpt4all_kwargs={'allow_download': 'True'},
+)
 
+
+def main():
     # Check if the database should be cleared (using the --clear flag).
     parser = argparse.ArgumentParser()
     parser.add_argument("--reset", action="store_true", help="Reset the database.")
@@ -36,15 +43,14 @@ def main():
 
     # process.terminate()
 
+
 documents = pdf_utilities.load_documents()
 chunks = pdf_utilities.split_documents(documents)
 
 
-
 def add_to_chroma(chunks):
     # Load the existing database.
-    db = Chroma(
-        persist_directory=vectorstore_path, embedding_function=embedding_model)
+    db = Chroma(persist_directory=vectorstore_path, embedding_function=embedding_model)
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
 
@@ -54,12 +60,12 @@ def add_to_chroma(chunks):
     existing_ids = set(existing_items["ids"])
     print(f"Number of existing documents in DB: {len(existing_ids)}")
 
-# Only add documents that don't exist in the DB.
+    # Only add documents that don't exist in the DB.
     new_chunks = []
     for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
             new_chunks.append(chunk)
-    
+
     if len(new_chunks):
         print(f"👉 Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
@@ -70,7 +76,6 @@ def add_to_chroma(chunks):
     else:
         print("✅ No new documents to add")
 
-    
     # db.persist() #automatically persisted
 
 
@@ -110,7 +115,8 @@ def clear_database():
 
 if __name__ == "__main__":
     from time import perf_counter
-    tin =  perf_counter()
+
+    tin = perf_counter()
     main()
     tout = perf_counter()
     print("Time taken: ", tout - tin)
